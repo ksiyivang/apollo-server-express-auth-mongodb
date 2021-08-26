@@ -24,9 +24,7 @@ export default {
          * @DESC to Get all the Posts
          * @Access Public
          */
-        allPosts: async (_, {}, {
-            Post
-        }) => {
+        allPosts: async (_, { }, { Post }) => {
             let posts = await Post.find().populate('author');
             return posts;
         },
@@ -34,11 +32,7 @@ export default {
          * @DESC to Get single the Post by ID
          * @Access Public
          */
-        getPostById: async (_, {
-            id
-        }, {
-            Post
-        }) => {
+        getPostById: async (_, { id }, { Post }) => {
             let post = await Post.findById(id).populate('author');
             return post;
         },
@@ -46,13 +40,7 @@ export default {
          * @DESC to Get Posts by Pagination variables
          * @Access Public
          */
-        getPostsWithPagination: async (_, {
-            page,
-            limit,
-            user_id
-        }, {
-            Post
-        }) => {
+        getPostsWithPagination: async (_, { page, limit, user_id }, { Post }) => {
 
             const options = {
                 page: page || 1,
@@ -79,14 +67,7 @@ export default {
          * @DESC to Get Posts by Pagination variables
          * @Access Public
          */
-        getMyPostsWithPagination: async (_, {
-            page,
-            limit
-        }, {
-            Post,
-            user
-        }) => {
-
+        getMyPostsWithPagination: async (_, { page, limit }, { Post, user }) => {
             const options = {
                 page: page || 1,
                 limit: limit || 10,
@@ -114,24 +95,11 @@ export default {
             }
          * @Access Private
          */
-        createPost: async (_, {
-            newPost
-        }, {
-            Post,
-            user
-        }) => {
-            const {
-                title,
-                content,
-            } = newPost;
+        createPost: async (_, { newPost }, { Post, user }) => {
+            const { title, content } = newPost;
 
             // Validate the incoming new Post arguments
-            await NewPostRules.validate({
-                title,
-                content
-            }, {
-                abortEarly: false
-            });
+            await NewPostRules.validate({ title, content }, { abortEarly: false });
             // Once the Validations are passed Create New Post
             const post = new Post({
                 ...newPost,
@@ -154,13 +122,7 @@ export default {
             }
          * @Access Private
          */
-        updatePost: async (_, {
-            updatedPost,
-            id,
-        }, {
-            Post,
-            user
-        }) => {
+        updatePost: async (_, { updatedPost, id }, { Post, user }) => {
             try {
                 let {
                     title,
@@ -174,15 +136,7 @@ export default {
                     abortEarly: false
                 });
 
-                let post = await Post
-                    .findOneAndUpdate({
-                            _id: id,
-                            author: user.id
-                        },
-                        updatedPost, {
-                            new: true
-                        }
-                    );
+                let post = await Post.findOneAndUpdate({ _id: id, author: user.id }, updatedPost, { new: true });
 
                 if (!post) {
                     throw new Error("Unathorized Access");
@@ -203,17 +157,9 @@ export default {
          * @Params id!
          * @Access Private
          */
-        deletePost: async (_, {
-            id,
-        }, {
-            Post,
-            user
-        }) => {
+        deletePost: async (_, { id }, { Post, user }) => {
             try {
-                let post = await Post.findOneAndDelete({
-                    _id: id,
-                    author: user.id
-                });
+                let post = await Post.findOneAndDelete({ _id: id, author: user.id });
 
                 if (!post) {
                     throw new Error("Unathorized Access");
